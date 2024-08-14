@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Form from '../components/Form';
 import Label from '../components/Label';
@@ -7,8 +7,17 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 
 const EditUser = () => {
-    const { id } = useParams(); // Obtém o UUID do parâmetro da URL
+
+    const [formData, setFormData] = useState({
+        // name: '',
+        email: '',
+        type: '',
+      });
+
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -41,78 +50,107 @@ const EditUser = () => {
         fetchUser();
     }, [id]);
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // TODO: Lógica para atualizar as informações do usuário
-    };
+    const handleChange = (e) => {
+        setFormData({
+          ...formData,
+          [e.target.name]: e.target.value,
+        });
+      };
 
-    if (!user) {
-        return <p>Carregando...</p>;
-    }
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        setError('');
+
+        try {
+            const token = sessionStorage.getItem('@user:access_token');
+
+            const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/update');
+            url.searchParams.append('uuid', id);
+
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Falha em atualizar o usuário');
+            }
+
+            console.log(response)
+
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
     return (
         <>
             <Header />
             <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded">
                 <h2 className="text-xl font-semibold mb-4">Editar Usuário</h2>
-                <Form>
-                    <div className="flex items-center min-h-12">
+                {error && <p className="text-red-500">{error}</p>}
+                <Form onSubmit={handleSubmit}>
+                    {/* <div className="flex items-center min-h-12">
                         <Label
-                            htmlFor={user.name}
+                            htmlFor="name"
                             className="p-2 basis-1/4"
                         >
                             Nome:
                         </Label>
                         <Input
                             type="text"
-                            value={user.name}
-                            onChange={(e) => setUser({ ...user, name: e.target.value })}
+                            name="name"
+                            id="name"
+                            value={formData.name}
+                            onChange={handleChange}
                             className="basis-3/4"
+                            autoComplete="name"
                         />
-                    </div>
+                    </div> */}
                     <div className="flex items-center min-h-12">
                         <Label
-                            htmlFor={user.email}
+                            htmlFor="email"
                             className="p-2 basis-1/4"
                         >
                             Email:
                         </Label>
                         <Input
                             type="email"
-                            value={user.email}
-                            onChange={(e) => setUser({ ...user, email: e.target.value })}
+                            name="email"
+                            id="email"
+                            value={formData.email}
+                            onChange={handleChange}
                             className="basis-3/4"
+                            autoComplete="email"
                         />
                     </div>
                     <div className="flex items-center min-h-12">
                         <Label
-                            htmlFor={user.email}
+                            htmlFor="type"
                             className="p-2 basis-1/4"
                         >
                             Tipo:
                         </Label>
                         <Input
                             type="text"
-                            value={user.type}
-                            onChange={(e) => setUser({ ...user, type: e.target.value })}
+                            name="type"
+                            id="type"
+                            value={formData.type}
+                            onChange={handleChange}
                             className="p-2 basis-3/4"
                         />
                     </div>
-                    <div className="flex items-center min-h-12">
-                        <Label
-                            htmlFor={user.email}
-                            className="p-2 basis-1/4"
-                        >
-                            Url da imagem:
-                        </Label>
-                        <Input
-                            type="text"
-                            value={user.profileImageUrl}
-                            onChange={(e) => setUser({ ...user, profileImageUrl: e.target.value })}
-                            className="p-2 basis-3/4"
-                        />
-                    </div>
-                    <Button>Atualizar</Button>
+                    
+                    <Button>
+                        Atualizar
+                    </Button>
                 </Form>
             </div>
         </>

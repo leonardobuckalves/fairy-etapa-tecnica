@@ -36,7 +36,7 @@ const Login = () => {
             
             sessionStorage.setItem('@user:access_token', result.accessToken);
             sessionStorage.setItem('@user:uuid', result.userData.uuid);
-            
+
             navigate('/dashboard');
         } catch (error) {
             console.error('Erro:', error.message);
@@ -56,6 +56,7 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    autoComplete="email"
                 />
             </div>
 
@@ -70,9 +71,10 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    autoComplete="new-password"
                 />
             </div>
-            <Button type="submit">
+            <Button>
                 Entrar
             </Button>
         </Form>

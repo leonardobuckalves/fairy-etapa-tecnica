@@ -18,6 +18,7 @@ const Dashboard = ({ page, itemsPerPage }) => {
 
                 const response = await fetch(url, {
                     method: 'GET',
+                    mode: 'cors',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
@@ -49,6 +50,8 @@ const Dashboard = ({ page, itemsPerPage }) => {
     return (
         <>
             <Header />
+            <h1>Dashboard</h1>
+            <h3>Lista de usuários:</h3>
             <div>
                 <div className="overflow-x-auto">
                     <table className="table-auto w-full border-collapse border border-gray-300">
@@ -91,8 +94,7 @@ const Dashboard = ({ page, itemsPerPage }) => {
                         </tbody>
                     </table>
                 </div>
-                <h2>Dashboard</h2>
-                <Link to="/profile">Ir para o Perfil</Link>
+                <Link to="/register">Criar novo usuário</Link>
             </div>
         </>
     );

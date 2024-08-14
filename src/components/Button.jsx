@@ -9,6 +9,7 @@ const Button = ({ children, ...props }) => {
                 shadow-sm hover:bg-indigo-700 focus:outline-none
                 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
             "
+            type="submit"
             {...props}
         >
             {children}
