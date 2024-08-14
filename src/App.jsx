@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './pages/login'
 import Dashboard from './pages/Dashboard'
 import UserProfile from './pages/UserProfile'
+import EditUser from './pages/EditUser';
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard page={1} itemsPerPage={20} />} />
 
             <Route path="/profile" element={<UserProfile />} />
+
+            <Route path="/users/edit/:id" element={<EditUser />} />
           </Routes>
       </Router>
     </>

@@ -78,7 +78,14 @@ const Dashboard = ({ page, itemsPerPage }) => {
                                     <td className="border border-gray-300 px-4 py-2">
                                         {new Date(item.createdAt).toLocaleDateString()}
                                     </td>
-                                    <td className="border border-gray-300 px-4 py-2">Editar</td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        <Link
+                                            to={`/users/edit/${item.uuid}`}
+                                            className="text-blue-500 hover:underline"
+                                        >
+                                            Editar
+                                        </Link>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

@@ -13,11 +13,13 @@ const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/auth/login');
+
         const data = { email, password };
 
         try {
             const response = await fetch(
-                'https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/auth/login',
+                url,
                 {
                     method: 'POST',
                     headers: {
@@ -31,9 +33,10 @@ const Login = () => {
             }
 
             const result = await response.json();
-            console.log('Resposta da API:', result);
+            
             sessionStorage.setItem('@user:access_token', result.accessToken);
-
+            sessionStorage.setItem('@user:uuid', result.userData.uuid);
+            
             navigate('/dashboard');
         } catch (error) {
             console.error('Erro:', error.message);
