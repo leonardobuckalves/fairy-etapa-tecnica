@@ -16,17 +16,22 @@ const UserProfile = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const [file, setFile] = useState(null);
+    const [status, setStatus] = useState("");
+
+    const [error, setError] = useState('');
+
     const [isEditing, setIsEditing] = useState({
         email: false,
-        type: false
+        type: false,
     });
+
+    const [isEditingPicture, setIsEditingPicture] = useState(false);
 
     const [editForm, setEditForm] = useState({
         email: '',
         type: ''
     });
-
-    const [error, setError] = useState('');
 
     const token = sessionStorage.getItem('@user:access_token');
     const userUuid = sessionStorage.getItem('@user:uuid');
@@ -63,13 +68,22 @@ const UserProfile = () => {
         };
 
         fetchUser();
-    }, [userUuid]);
+    }, []);
 
     const handleEditClick = (field) => {
         setIsEditing({
             ...isEditing,
             [field]: true
         });
+    };
+
+    const handleCancel = () => {
+        setIsEditing({
+            ...isEditing,
+            email: false,
+            type: false,
+        });
+        setError('');
     };
 
     const handleChange = (e) => {
@@ -108,18 +122,45 @@ const UserProfile = () => {
         }
     };
 
-    const handleCancel = () => {
-        setIsEditing({
-            ...isEditing,
-            email: false,
-            type: false,
-        });
-        setError('');
-    };
-
     if (loading) {
         return <LoadingInfo />
-    }
+    };
+
+    const handleSubmit = async (event) => {
+
+        const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/storage/profile-image');
+    
+        event.preventDefault();
+    
+        try {
+            const formData = new FormData();
+            formData.append("userUuid", userUuid);
+            formData.append("file", file);
+    
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData
+            });
+    
+            const result = await response.json();
+            setStatus(result);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsEditingPicture(false);
+        }
+    };
+
+    const handlePictureEditClick = () => {
+        setIsEditingPicture(true);
+    };
+
+    const handlePictureCloseClick = () => {
+        setIsEditingPicture(false);
+    };
 
     return (
         <Container>
@@ -132,7 +173,48 @@ const UserProfile = () => {
 
             <UserSection>
 
-                <ProfilePicture perfil={user} />
+                <ProfilePicture perfil={user}>
+                    <FontAwesomeIcon
+                        icon={faEdit}
+                        className="ml-2 cursor-pointer text-blue-500"
+                        onClick={handlePictureEditClick}
+                    />
+                    {isEditingPicture && (
+                        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                                <h1 className="text-center text-lg mb-4">Enviar Arquivo</h1>
+                                <form onSubmit={handleSubmit}>
+                                    <input type="file" onChange={(e) => setFile(e.target.files[0])} className="mb-4" />
+
+                                    <div className="flex justify-between">
+                                        <button 
+                                            type="submit" 
+                                            disabled={!file}
+                                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                        >
+                                            Upload
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            onClick={handlePictureCloseClick}
+                                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                    {/* <form onSubmit={handleSubmit}>
+                        <h1>React File Upload</h1>
+                        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+
+                        <button type="submit" disabled={!file}>
+                            Upload File
+                        </button>
+                    </form> */}
+                </ProfilePicture>
 
                 <div className="w-1 bg-black mx-4 h-full"></div>
 
