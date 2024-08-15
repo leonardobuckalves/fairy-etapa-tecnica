@@ -7,51 +7,66 @@ import Container from '../components/Container';
 import TitleSection from '../components/TitleSection';
 import LoadingInfo from '../components/LoadingInfo';
 
-const Dashboard = ({ page, itemsPerPage }) => {
+const Dashboard = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [itemsPerPage] = useState(5);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
+    const fetchData = async () => {
 
-            try {
-                const token = sessionStorage.getItem('@user:access_token');
+        try {
+            const token = sessionStorage.getItem('@user:access_token');
 
-                const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/list');
-                url.searchParams.append('page', page);
-                url.searchParams.append('itemsPerPage', itemsPerPage);
+            const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/list');
+            url.searchParams.append('page', page);
+            url.searchParams.append('itemsPerPage', itemsPerPage);
 
-                const response = await fetch(url, {
-                    method: 'GET',
-                    mode: 'cors',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status}`);
-                }
-
-                const result = await response.json();
-
-                setData(result.data);
-            } catch (error) {
-                console.error('Erro ao buscar os dados:', error);
-                setData([]);
-            } finally {
-                setLoading(false);
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
             }
-        };
 
+            const result = await response.json();
+
+            setData(result.data);
+        } catch (error) {
+            setData([]);
+            throw new Error('Erro ao buscar os dados:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchData();
     }, [page, itemsPerPage]);
 
     if (loading) {
         return <LoadingInfo />
     }
+
+    const handleNextPage = () => {
+        if (page < 99){
+            setPage(prevPage => prevPage + 1);
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (page > 1) {
+            setPage(prevPage => prevPage - 1);
+        }
+    };
+
 
     return (
         <Container>
@@ -90,7 +105,7 @@ const Dashboard = ({ page, itemsPerPage }) => {
                                     <td className="border border-gray-300 px-4 py-2 text-center">
                                         <FontAwesomeIcon
                                             icon={faEdit}
-                                            className="ml-2 cursor-pointer text-blue-500"
+                                            className="ml-2 cursor-pointer text-lime-500 hover:text-lime-700"
                                             onClick={() => navigate(`/users/edit/${item.uuid}`)}
                                         />
                                     </td>
@@ -98,6 +113,22 @@ const Dashboard = ({ page, itemsPerPage }) => {
                             ))}
                         </tbody>
                     </table>
+                    <div className="flex justify-end">
+                        <button
+                            onClick={handlePreviousPage}
+                            disabled={page === 1}
+                            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                        >
+                            Anterior
+                        </button>
+                        <span className="px-4 py-2">{page}</span>
+                        <button
+                            onClick={handleNextPage}
+                            className="px-4 py-2 bg-gray-200 rounded"
+                        >
+                            Próximo
+                        </button>
+                    </div>
                 </div>
         </Container>
     );

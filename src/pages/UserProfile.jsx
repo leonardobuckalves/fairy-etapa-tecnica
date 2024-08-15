@@ -17,7 +17,7 @@ const UserProfile = () => {
     const [loading, setLoading] = useState(true);
 
     const [file, setFile] = useState(null);
-    const [status, setStatus] = useState("");
+    const [pictureUrl, setPictureUrl] = useState("");
 
     const [error, setError] = useState('');
 
@@ -36,39 +36,39 @@ const UserProfile = () => {
     const token = sessionStorage.getItem('@user:access_token');
     const userUuid = sessionStorage.getItem('@user:uuid');
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/find-by-uuid');
-                url.searchParams.append('uuid', userUuid);
+    const fetchUser = async () => {
+        try {
+            const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/find-by-uuid');
+            url.searchParams.append('uuid', userUuid);
 
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status}`);
-                }
-
-                const result = await response.json();
-                setUser(result);
-                setEditForm({
-                    email: result.email,
-                    type: result.type || ''
-                });
-            } catch (error) {
-                console.error('Erro ao buscar o usuário:', error);
-            } finally {
-                setLoading(false);
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
             }
-        };
 
+            const result = await response.json();
+            setUser(result);
+            setEditForm({
+                email: result.email,
+                type: result.type || ''
+            });
+        } catch (error) {
+            console.error('Erro ao buscar o usuário:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchUser();
-    }, []);
+    }, [userUuid, pictureUrl]);
 
     const handleEditClick = (field) => {
         setIsEditing({
@@ -107,7 +107,10 @@ const UserProfile = () => {
                 body: JSON.stringify(editForm),
             });
 
-            if (!response.ok) {
+            if (response.ok) {
+                // Após o upload, recarregue os dados do usuário para atualizar a imagem
+                await fetchUser();
+            } else {
                 throw new Error(`Error: ${response.status}`);
             }
 
@@ -146,7 +149,9 @@ const UserProfile = () => {
             });
     
             const result = await response.json();
-            setStatus(result);
+
+            setPictureUrl(result.url);
+            
         } catch (error) {
             console.log(error);
         } finally {
@@ -206,14 +211,6 @@ const UserProfile = () => {
                             </div>
                         </div>
                     )}
-                    {/* <form onSubmit={handleSubmit}>
-                        <h1>React File Upload</h1>
-                        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-
-                        <button type="submit" disabled={!file}>
-                            Upload File
-                        </button>
-                    </form> */}
                 </ProfilePicture>
 
                 <div className="w-1 bg-black mx-4 h-full"></div>

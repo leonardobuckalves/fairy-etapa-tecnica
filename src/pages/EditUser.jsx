@@ -199,6 +199,10 @@ const EditUser = () => {
                         {new Date(user.updatedAt).toLocaleDateString()}
                     </ProfileInfoRow>
 
+                    <ProfileInfoRow label={"Deletado:"}>
+                        {user.deletedAt ? new Date(user.deletedAt).toLocaleDateString() : 'Nunca'}
+                    </ProfileInfoRow>
+
                     {(isEditing.email || isEditing.type) && (
                         <div className="mt-2">
                             <Button
