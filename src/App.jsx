@@ -1,5 +1,4 @@
 import React from 'react'
-import './App.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './pages/login'
 import Dashboard from './pages/Dashboard'
@@ -16,9 +15,9 @@ function App() {
 
             <Route path="/dashboard" element={<Dashboard page={1} itemsPerPage={20} />} />
 
-            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/user/profile" element={<UserProfile />} />
 
-            <Route path="/register" element={<RegisterUser />} />
+            <Route path="/register/user" element={<RegisterUser />} />
 
             <Route path="/users/edit/:id" element={<EditUser />} />
           </Routes>

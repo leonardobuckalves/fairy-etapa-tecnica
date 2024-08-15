@@ -8,7 +8,7 @@ const Label = ({ className, children, ...props }) => {
         >
             {children}
         </label>
-    )
-}
+    );
+};
 
 export default Label;

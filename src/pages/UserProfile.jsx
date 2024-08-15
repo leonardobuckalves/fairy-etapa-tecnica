@@ -1,77 +1,222 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import Container from '../components/Container';
+import TitleSection from '../components/TitleSection';
+import ProfilePicture from '../components/ProfilePicture';
+import UserSection from '../components/UserSection';
+import Input from '../components/Input';
+import ProfileInformation from '../components/ProfileInformation';
+import ProfileInfoRow from '../components/ProfileInfoRow';
+import Button from '../components/Button';
+import LoadingInfo from '../components/LoadingInfo';
 
 const UserProfile = () => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  const [user, setUser] = useState(null);
+    const [isEditing, setIsEditing] = useState({
+        email: false,
+        type: false
+    });
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = sessionStorage.getItem('@user:access_token');
-        const userUuid = sessionStorage.getItem('@user:uuid');
+    const [editForm, setEditForm] = useState({
+        email: '',
+        type: ''
+    });
 
-        const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/find-by-uuid');
-        url.searchParams.append('uuid', userUuid);
+    const [error, setError] = useState('');
 
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+    const token = sessionStorage.getItem('@user:access_token');
+    const userUuid = sessionStorage.getItem('@user:uuid');
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/find-by-uuid');
+                url.searchParams.append('uuid', userUuid);
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                setUser(result);
+                setEditForm({
+                    email: result.email,
+                    type: result.type || ''
+                });
+            } catch (error) {
+                console.error('Erro ao buscar o usuário:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUser();
+    }, [userUuid]);
+
+    const handleEditClick = (field) => {
+        setIsEditing({
+            ...isEditing,
+            [field]: true
         });
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-
-        const result = await response.json();
-        
-        setUser(result);
-      } catch (error) {
-        console.error('Erro ao buscar o usuário:', error);
-      }
     };
 
-    fetchUser();
-  }, []);
+    const handleChange = (e) => {
+        setEditForm({
+            ...editForm,
+            [e.target.name]: e.target.value
+        });
+    };
 
-  if (!user) {
+    const handleSave = async () => {
+        try {
+            const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/update')
+            url.searchParams.append('uuid', userUuid);
+
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(editForm),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+
+            const updatedUser = await response.json();
+            setUser(updatedUser);
+            setIsEditing({
+                email: false,
+                type: false
+            });
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const handleCancel = () => {
+        setIsEditing({
+            ...isEditing,
+            email: false,
+            type: false,
+        });
+        setError('');
+    };
+
+    if (loading) {
+        return <LoadingInfo />
+    }
+
     return (
-      <div>
-        <Header />
-        <div className="p-4">
-          <h2 className="text-2xl font-bold mb-4">Perfil</h2>
-          <p>Carregando informações...</p>
-        </div>
-      </div>
-    );
-  }
+        <Container>
 
-  return (
-    <>
-      <Header />
-      <div className="p-4">
-        <h2 className="text-2xl font-bold mb-4">Perfil</h2>
-        <div className="flex items-center space-x-4">
-          <img
-            src={user.profileImageUrl}
-            alt={`${user.name}'s profile`}
-            className="w-24 h-24 rounded-full border-2 border-gray-300"
-          />
-          <div>
-            <p className="text-lg font-semibold">Nome: {user.name}</p>
-            <p>Email: {user.email}</p>
-            <p>UUID: {user.uuid}</p>
-            <p>Criado em: {new Date(user.createdAt).toLocaleDateString()}</p>
-            <p>Atualizado em: {new Date(user.updatedAt).toLocaleDateString()}</p>
-            <p>Deletado em: {user.deletedAt ? new Date(user.deletedAt).toLocaleDateString() : 'Nunca'}</p>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+            <Header />
+
+            <TitleSection>
+                Perfil
+            </TitleSection>
+
+            <UserSection>
+
+                <ProfilePicture perfil={user} />
+
+                <div className="w-1 bg-black mx-4 h-full"></div>
+
+                <ProfileInformation>
+
+                    {error && <p className="text-red-500">{error}</p>}
+
+                    <ProfileInfoRow label={"Nome:"}>
+                        {user.name}
+                    </ProfileInfoRow>
+
+                    <ProfileInfoRow label={"Email:"}>
+                        {isEditing.email ? (
+                            <Input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value={editForm.email}
+                                onChange={handleChange}
+                            />
+                        ) : (
+                            <>
+                                {user.email}
+                                <FontAwesomeIcon
+                                    icon={faEdit}
+                                    className="ml-2 cursor-pointer text-blue-500"
+                                    onClick={() => handleEditClick('email')}
+                                />
+                            </>
+                        )}
+                    </ProfileInfoRow>
+
+                    <ProfileInfoRow label={"Tipo:"}>
+                        {isEditing.type ? (
+                            <Input
+                                type="text"
+                                name="type"
+                                id="type"
+                                value={editForm.type}
+                                onChange={handleChange}
+                            />
+                        ) : (
+                            <>
+                                {user.type}
+                                <FontAwesomeIcon
+                                    icon={faEdit}
+                                    className="ml-2 cursor-pointer text-blue-500"
+                                    onClick={() => handleEditClick('type')}
+                                />
+                            </>
+                        )}
+                    </ProfileInfoRow>
+
+                    <ProfileInfoRow label={"Data Criação:"}>
+                        {new Date(user.createdAt).toLocaleDateString()}
+                    </ProfileInfoRow>
+
+                    <ProfileInfoRow label={"Ultima Atualização:"}>
+                        {new Date(user.updatedAt).toLocaleDateString()}
+                    </ProfileInfoRow>
+
+                    {(isEditing.email || isEditing.type) && (
+                        <div className="mt-2">
+                            <Button
+                                onClick={handleSave}
+                                className="bg-green-500 hover:bg-green-700 my-2"
+                            >
+                                Salvar
+                            </Button>
+                            <Button
+                                onClick={handleCancel}
+                                className="bg-red-500 hover:bg-red-700 my-2"
+                            >
+                                Cancelar
+                            </Button>
+                        </div>
+                    )}
+                </ProfileInformation>
+                {/*
+                    <p>Deletado em: {user.deletedAt ? new Date(user.deletedAt).toLocaleDateString() : 'Nunca'}</p>
+                */}
+            </UserSection>
+        </Container>
+    );
 };
 
 export default UserProfile;

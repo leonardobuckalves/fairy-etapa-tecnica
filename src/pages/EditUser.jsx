@@ -1,23 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import Header from '../components/Header';
-import Form from '../components/Form';
-import Label from '../components/Label';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import Container from '../components/Container';
+import TitleSection from '../components/TitleSection';
+import UserSection from '../components/UserSection';
+import ProfilePicture from '../components/ProfilePicture';
+import ProfileInformation from '../components/ProfileInformation';
+import ProfileInfoRow from '../components/ProfileInfoRow';
+import LoadingInfo from '../components/LoadingInfo';
 
 const EditUser = () => {
 
-    const [formData, setFormData] = useState({
-        // name: '',
+    const [isEditing, setIsEditing] = useState({
+        email: false,
+        type: false
+    });
+
+    const [editForm, setEditForm] = useState({
         email: '',
-        type: '',
-      });
+        type: ''
+    });
 
     const { id } = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -42,22 +54,44 @@ const EditUser = () => {
                 const result = await response.json();
 
                 setUser(result);
+                setEditForm({
+                    email: result.email,
+                    type: result.type || ''
+                });
             } catch (error) {
                 console.error('Erro ao buscar o usuário:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchUser();
     }, [id]);
 
-    const handleChange = (e) => {
-        setFormData({
-          ...formData,
-          [e.target.name]: e.target.value,
+    const handleEditClick = (field) => {
+        setIsEditing({
+            ...isEditing,
+            [field]: true
         });
-      };
+    };
 
-    const handleSubmit = async (event) => {
+    const handleChange = (e) => {
+        setEditForm({
+            ...editForm,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleCancel = () => {
+        setIsEditing({
+            ...isEditing,
+            email: false,
+            type: false,
+        });
+        setError('');
+    };
+
+    const handleSave = async (event) => {
         event.preventDefault();
 
         setError('');
@@ -74,7 +108,7 @@ const EditUser = () => {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(editForm),
             });
 
             if (!response.ok) {
@@ -82,78 +116,111 @@ const EditUser = () => {
                 throw new Error(errorData.message || 'Falha em atualizar o usuário');
             }
 
-            console.log(response)
-
             navigate('/dashboard');
         } catch (err) {
             setError(err.message);
         }
     };
 
+    if (loading) {
+        return <LoadingInfo />
+    }
+
     return (
-        <>
+        <Container>
+
             <Header />
-            <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded">
-                <h2 className="text-xl font-semibold mb-4">Editar Usuário</h2>
-                {error && <p className="text-red-500">{error}</p>}
-                <Form onSubmit={handleSubmit}>
-                    {/* <div className="flex items-center min-h-12">
-                        <Label
-                            htmlFor="name"
-                            className="p-2 basis-1/4"
-                        >
-                            Nome:
-                        </Label>
-                        <Input
-                            type="text"
-                            name="name"
-                            id="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="basis-3/4"
-                            autoComplete="name"
-                        />
-                    </div> */}
-                    <div className="flex items-center min-h-12">
-                        <Label
-                            htmlFor="email"
-                            className="p-2 basis-1/4"
-                        >
-                            Email:
-                        </Label>
-                        <Input
-                            type="email"
-                            name="email"
-                            id="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="basis-3/4"
-                            autoComplete="email"
-                        />
-                    </div>
-                    <div className="flex items-center min-h-12">
-                        <Label
-                            htmlFor="type"
-                            className="p-2 basis-1/4"
-                        >
-                            Tipo:
-                        </Label>
-                        <Input
-                            type="text"
-                            name="type"
-                            id="type"
-                            value={formData.type}
-                            onChange={handleChange}
-                            className="p-2 basis-3/4"
-                        />
-                    </div>
-                    
-                    <Button>
-                        Atualizar
-                    </Button>
-                </Form>
-            </div>
-        </>
+
+            <TitleSection>
+                Editar Usuário
+            </TitleSection>
+
+            <UserSection>
+
+                <ProfilePicture perfil={user} />
+
+                <div className="w-1 bg-black mx-4 h-full"></div>
+
+                <ProfileInformation>
+
+                    {error && <p className="text-red-500">{error}</p>}
+
+                    <ProfileInfoRow label={"Nome:"}>
+                        {user.name}
+                    </ProfileInfoRow>
+
+                    <ProfileInfoRow label={"Email:"}>
+                        {isEditing.email ? (
+                            <Input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value={editForm.email}
+                                onChange={handleChange}
+                            />
+                        ) : (
+                            <>
+                                {user.email}
+                                <FontAwesomeIcon
+                                    icon={faEdit}
+                                    className="ml-2 cursor-pointer text-blue-500"
+                                    onClick={() => handleEditClick('email')}
+                                />
+                            </>
+                        )}
+                    </ProfileInfoRow>
+
+                    <ProfileInfoRow label={"Tipo:"}>
+                        {isEditing.type ? (
+                            <Input
+                                type="text"
+                                name="type"
+                                id="type"
+                                value={editForm.type}
+                                onChange={handleChange}
+                            />
+                        ) : (
+                            <>
+                                {user.type}
+                                <FontAwesomeIcon
+                                    icon={faEdit}
+                                    className="ml-2 cursor-pointer text-blue-500"
+                                    onClick={() => handleEditClick('type')}
+                                />
+                            </>
+                        )}
+                    </ProfileInfoRow>
+
+                    <ProfileInfoRow label={"Data Criação:"}>
+                        {new Date(user.createdAt).toLocaleDateString()}
+                    </ProfileInfoRow>
+
+                    <ProfileInfoRow label={"Ultima Atualização:"}>
+                        {new Date(user.updatedAt).toLocaleDateString()}
+                    </ProfileInfoRow>
+
+                    {(isEditing.email || isEditing.type) && (
+                        <div className="mt-2">
+                            <Button
+                                onClick={handleSave}
+                                className="bg-green-500 hover:bg-green-700 my-2"
+                            >
+                                Salvar
+                            </Button>
+                            <Button
+                                onClick={handleCancel}
+                                className="bg-red-500 hover:bg-red-700 my-2"
+                            >
+                                Cancelar
+                            </Button>
+                        </div>
+                    )}
+                </ProfileInformation>
+                {/*
+                        <p>Deletado em: {user.deletedAt ? new Date(user.deletedAt).toLocaleDateString() : 'Nunca'}</p>
+                    */}
+            </UserSection>
+        </Container>
 
     );
 };

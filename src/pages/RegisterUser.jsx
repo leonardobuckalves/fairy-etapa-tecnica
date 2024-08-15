@@ -4,6 +4,8 @@ import Input from '../components/Input';
 import Label from '../components/Label';
 import Button from '../components/Button';
 import Header from '../components/Header';
+import Container from '../components/Container';
+import TitleSection from '../components/TitleSection';
 
 const RegisterUser = () => {
     const [formData, setFormData] = useState({
@@ -55,72 +57,93 @@ const RegisterUser = () => {
     };
 
     return (
-        <>
-        <Header />
-            <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded">
-                <h2 className="text-xl font-semibold mb-4">Cadastro de Usuário</h2>
-                {error && <p className="text-red-500">{error}</p>}
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <Label htmlFor="name">
-                            Nome:
-                        </Label>
-                        <Input
-                            type="text"
-                            name="name"
-                            id="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                            autoComplete="name"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <Label htmlFor="email">
-                            Email:
-                        </Label>
-                        <Input
-                            type="email"
-                            name="email"
-                            id="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                            autoComplete="email"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <Label htmlFor="password">
-                            Senha:
-                        </Label>
-                        <Input
-                            type="password"
-                            name="password"
-                            id="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-password"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <Label htmlFor="type">
-                            Tipo:
-                        </Label>
-                        <Input
-                            type="text"
-                            name="type"
-                            id="type"
-                            value={formData.type}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <Button>
-                        Cadastrar
-                    </Button>
-                </form>
+        <Container>
+            <Header />
+            <TitleSection>
+                Cadastro de Usuário
+            </TitleSection>
+            {error && <p className="text-red-500">{error}</p>}
+
+            <div className="p-4 bg-white rounded">
+                <div className="flex justify-center">
+                    <form onSubmit={handleSubmit} className="w-auto md:w-48 lg:w-96 shadow-md">
+                        <div className="mb-4">
+                            <div className="flex justify-start">
+                                <Label
+                                    htmlFor="name"
+                                >
+                                    Nome:
+                                </Label>
+                            </div>
+                            <Input
+                                type="text"
+                                name="name"
+                                id="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                required
+                                autoComplete="name"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <div className="flex justify-start">
+                                <Label
+                                    htmlFor="email"
+                                >
+                                    Email:
+                                </Label>
+                            </div>
+                            <Input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                                autoComplete="email"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <div className="flex justify-start">
+                                <Label
+                                    htmlFor="password"
+                                >
+                                    Senha:
+                                </Label>
+                            </div>
+                            <Input
+                                type="password"
+                                name="password"
+                                id="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                                autoComplete="new-password"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <div className="flex justify-start">
+                                <Label
+                                    htmlFor="type"
+                                >
+                                    Tipo:
+                                </Label>
+                            </div>
+                            <Input
+                                type="text"
+                                name="type"
+                                id="type"
+                                value={formData.type}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <Button>
+                            Cadastrar
+                        </Button>
+                    </form>
+                </div>
             </div>
-        </>
+        </Container>
     );
 };
 

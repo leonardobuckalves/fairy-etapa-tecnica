@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../components/Input';
 import Label from '../components/Label';
 import Button from '../components/Button';
-import Form from '../components/Form';
+import TitleSection from '../components/TitleSection';
+import Container from '../components/Container';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -33,7 +34,7 @@ const Login = () => {
             }
 
             const result = await response.json();
-            
+
             sessionStorage.setItem('@user:access_token', result.accessToken);
             sessionStorage.setItem('@user:uuid', result.userData.uuid);
 
@@ -44,40 +45,49 @@ const Login = () => {
     };
 
     return (
-        <Form onSubmit={handleSubmit}>
-            <div>
-                <Label htmlFor="email">
-                    Email
-                </Label>
+        <Container className="justify-center">
 
-                <Input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                />
+            <TitleSection>
+                Login
+            </TitleSection>
+
+            <div className="flex justify-center p-4 bg-white rounded">
+                <form onSubmit={handleSubmit} className='w-auto lg:w-96 shadow-md'>
+                    <div>
+                        <Label htmlFor="email">
+                            Email
+                        </Label>
+
+                        <Input
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            autoComplete="email"
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="password">
+                            Senha
+                        </Label>
+
+                        <Input
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            autoComplete="new-password"
+                        />
+                    </div>
+                    <Button className="my-2">
+                        Entrar
+                    </Button>
+                </form>
             </div>
-
-            <div>
-                <Label htmlFor="password">
-                    Senha
-                </Label>
-
-                <Input
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="new-password"
-                />
-            </div>
-            <Button>
-                Entrar
-            </Button>
-        </Form>
+        </Container>
     );
 };
 
