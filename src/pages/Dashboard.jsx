@@ -79,7 +79,7 @@ const Dashboard = () => {
 
             <div className="flex justify-center overflow-x-auto">
                 <table className="table-auto border border-gray-500 border-collapse bg-white">
-                    <thead>
+                    <thead className="bg-lime-500">
                         <tr>
                             <th className="border border-gray-500 px-4 py-2">Imagem de Perfil</th>
                             <th className="border border-gray-500 px-4 py-2">Nome</th>
@@ -126,7 +126,8 @@ const Dashboard = () => {
                 <span className="px-4 py-2">{page}</span>
                 <button
                     onClick={handleNextPage}
-                    className="px-4 py-2 bg-white rounded"
+                    disabled={page >= 99}
+                    className="px-4 py-2 bg-white rounded disabled:opacity-50"
                 >
                     Próximo
                 </button>
