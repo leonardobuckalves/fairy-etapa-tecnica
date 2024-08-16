@@ -48,6 +48,26 @@ Acesse a rota no seu navegador de preferência `http://localhost:5173/`
 
 # Telas
 
+### Login
+
+![Tela Login 00](https://github.com/user-attachments/assets/52af9fa3-45bf-4d91-bed1-ce3e168c0584)
+
+### Dashboard
+
+![Tela Dashboard 01](https://github.com/user-attachments/assets/38b3413b-6b1d-4b4c-be83-f2c19c0bb2db)
+
+### Registro de Usuários
+
+![Cadastro Usuario 02](https://github.com/user-attachments/assets/3c5cf62e-af9b-4522-82d8-50eed4afc795)
+
+### Edição e Visualização de Usuário
+
+![Editar Usuario 03](https://github.com/user-attachments/assets/9278bea6-0543-4fc2-8f40-32a43bf0828f)
+
+### Perfil
+
+![Perfil 04](https://github.com/user-attachments/assets/23262172-4200-4f0b-bfab-10b57afa5e8e)
+
 # Tecnologias
 
 - [Vite](https://vitejs.dev/)
