@@ -163,7 +163,7 @@ const EditUser = () => {
                                 {user.email}
                                 <FontAwesomeIcon
                                     icon={faEdit}
-                                    className="ml-2 cursor-pointer text-blue-500"
+                                    className="ml-2 cursor-pointer text-lime-500 hover:text-lime-700"
                                     onClick={() => handleEditClick('email')}
                                 />
                             </>
@@ -184,7 +184,7 @@ const EditUser = () => {
                                 {user.type}
                                 <FontAwesomeIcon
                                     icon={faEdit}
-                                    className="ml-2 cursor-pointer text-blue-500"
+                                    className="ml-2 cursor-pointer text-lime-500 hover:text-lime-700"
                                     onClick={() => handleEditClick('type')}
                                 />
                             </>
