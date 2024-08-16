@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
-import Header from '../components/Header';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Container from '../components/Container';
@@ -31,40 +30,43 @@ const EditUser = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const token = sessionStorage.getItem('@user:access_token');
-
-                const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/find-by-uuid');
-                url.searchParams.append('uuid', id);
-
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status}`);
-                }
-
-                const result = await response.json();
-
-                setUser(result);
-                setEditForm({
-                    email: result.email,
-                    type: result.type || ''
-                });
-            } catch (error) {
-                console.error('Erro ao buscar o usuário:', error);
-            } finally {
-                setLoading(false);
+    const fetchUser = async () => {
+        try {
+            const token = sessionStorage.getItem('@user:access_token');
+            if (!token) {
+                navigate("/");
             }
-        };
 
+            const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/find-by-uuid');
+            url.searchParams.append('uuid', id);
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            setUser(result);
+            setEditForm({
+                email: result.email,
+                type: result.type || ''
+            });
+        } catch (error) {
+            console.error('Erro ao buscar o usuário:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchUser();
     }, [id]);
 
@@ -128,8 +130,6 @@ const EditUser = () => {
 
     return (
         <Container>
-
-            <Header />
 
             <TitleSection>
                 Editar Usuário

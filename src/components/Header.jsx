@@ -12,35 +12,35 @@ const Header = () => {
                     onClick={() => window.open("https://fairysolutions.co/", "_blank")}
                 />
                 <nav>
-                <ul className="flex space-x-4">
-                    <li>
-                        <Link
-                            to="/register/user"
-                            className="text-white hover:text-lime-500"
-                        >
-                            Criar Usuário
-                        </Link>
-                    </li>
-                    <li>
-                        <Link
-                            to="/dashboard"
-                            className="text-white hover:text-lime-500"
-                        >
-                            Dashboard
-                        </Link>
-                    </li>
-                    <li>
-                        <Link
-                            to="/user/profile"
-                            className="text-white hover:text-lime-500"
-                        >
-                            Perfil
-                        </Link>
-                    </li>
-                </ul>
+                    <ul className="flex space-x-4">
+                        <li>
+                            <Link
+                                to="/dashboard"
+                                className="text-white hover:text-lime-500"
+                            >
+                                Dashboard
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
+                                to="/register/user"
+                                className="text-white hover:text-lime-500"
+                            >
+                                Criar Usuário
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
+                                to="/user/profile"
+                                className="text-white hover:text-lime-500"
+                            >
+                                Perfil
+                            </Link>
+                        </li>
+                    </ul>
                 </nav>
             </div>
-        </header>  
+        </header>
     );
 };
 

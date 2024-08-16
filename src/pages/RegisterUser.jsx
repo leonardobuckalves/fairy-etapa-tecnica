@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../components/Input';
 import Label from '../components/Label';
 import Button from '../components/Button';
-import Header from '../components/Header';
 import Container from '../components/Container';
 import TitleSection from '../components/TitleSection';
 
@@ -30,6 +29,9 @@ const RegisterUser = () => {
         setError('');
 
         const token = sessionStorage.getItem('@user:access_token');
+        if (!token) {
+            navigate("/");
+        }
 
         const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/auth/register');
 
@@ -58,15 +60,16 @@ const RegisterUser = () => {
 
     return (
         <Container>
-            <Header />
+
             <TitleSection>
                 Cadastro de Usuário
             </TitleSection>
+
             {error && <p className="text-red-500">{error}</p>}
 
-            <div className="p-4 bg-white rounded">
+            <div className="p-4 bg-white rounded bg-zinc-200">
                 <div className="flex justify-center">
-                    <form onSubmit={handleSubmit} className="w-auto md:w-48 lg:w-96 shadow-md">
+                    <form onSubmit={handleSubmit} className="w-auto md:w-48 lg:w-96">
                         <div className="mb-4">
                             <div className="flex justify-start">
                                 <Label

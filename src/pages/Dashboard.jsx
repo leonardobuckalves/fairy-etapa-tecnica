@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
-import Header from '../components/Header';
 import Container from '../components/Container';
 import TitleSection from '../components/TitleSection';
 import LoadingInfo from '../components/LoadingInfo';
@@ -18,6 +17,9 @@ const Dashboard = () => {
 
         try {
             const token = sessionStorage.getItem('@user:access_token');
+            if (!token) {
+                navigate("/");
+            }
 
             const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/users/list');
             url.searchParams.append('page', page);
@@ -56,7 +58,7 @@ const Dashboard = () => {
     }
 
     const handleNextPage = () => {
-        if (page < 99){
+        if (page < 99) {
             setPage(prevPage => prevPage + 1);
         }
     };
@@ -70,66 +72,66 @@ const Dashboard = () => {
 
     return (
         <Container>
-            <Header />
 
             <TitleSection>
                 Lista de Usuários
             </TitleSection>
 
-                <div className="overflow-x-auto">
-                    <table className="table-auto w-full border-collapse border border-gray-300">
-                        <thead>
-                            <tr>
-                                <th className="border border-gray-300 px-4 py-2">Imagem de Perfil</th>
-                                <th className="border border-gray-300 px-4 py-2">Nome</th>
-                                <th className="border border-gray-300 px-4 py-2">Email</th>
-                                <th className="border border-gray-300 px-4 py-2">Tipo</th>
-                                <th className="border border-gray-300 px-4 py-2">Editar Perfil</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((item) => (
-                                <tr key={item.uuid}>
-                                    <td className="border border-gray-300 px-4 py-2">
-                                        <div className="flex justify-center">
-                                            <img
-                                                src={item.profileImageUrl}
-                                                alt={`${item.name} profile`}
-                                                className="h-16 w-16 object-fill rounded-full"
-                                            />
-                                        </div>
-                                    </td>
-                                    <td className="border border-gray-300 px-4 py-2 text-center">{item.name}</td>
-                                    <td className="border border-gray-300 px-4 py-2 text-center">{item.email}</td>
-                                    <td className="border border-gray-300 px-4 py-2 text-center">{item.type}</td>
-                                    <td className="border border-gray-300 px-4 py-2 text-center">
-                                        <FontAwesomeIcon
-                                            icon={faEdit}
-                                            className="ml-2 cursor-pointer text-lime-500 hover:text-lime-700"
-                                            onClick={() => navigate(`/users/edit/${item.uuid}`)}
+            <div className="flex justify-center overflow-x-auto">
+                <table className="table-auto border border-gray-500 border-collapse bg-white">
+                    <thead>
+                        <tr>
+                            <th className="border border-gray-500 px-4 py-2">Imagem de Perfil</th>
+                            <th className="border border-gray-500 px-4 py-2">Nome</th>
+                            <th className="border border-gray-500 px-4 py-2">Email</th>
+                            <th className="border border-gray-500 px-4 py-2">Tipo</th>
+                            <th className="border border-gray-500 px-4 py-2">Editar Perfil</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data.map((item) => (
+                            <tr key={item.uuid}>
+                                <td className="border border-gray-500 px-4 py-2">
+                                    <div className="flex justify-center">
+                                        <img
+                                            src={item.profileImageUrl}
+                                            alt={`${item.name} profile`}
+                                            className="h-16 w-16 object-fill rounded-full"
                                         />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <div className="flex justify-end">
-                        <button
-                            onClick={handlePreviousPage}
-                            disabled={page === 1}
-                            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-                        >
-                            Anterior
-                        </button>
-                        <span className="px-4 py-2">{page}</span>
-                        <button
-                            onClick={handleNextPage}
-                            className="px-4 py-2 bg-gray-200 rounded"
-                        >
-                            Próximo
-                        </button>
-                    </div>
-                </div>
+                                    </div>
+                                </td>
+                                <td className="border border-gray-500 px-4 py-2 text-center">{item.name}</td>
+                                <td className="border border-gray-500 px-4 py-2 text-center">{item.email}</td>
+                                <td className="border border-gray-500 px-4 py-2 text-center">{item.type}</td>
+                                <td className="border border-gray-500 px-4 py-2 text-center">
+                                    <FontAwesomeIcon
+                                        icon={faEdit}
+                                        className="ml-2 cursor-pointer text-lime-500 hover:text-lime-700"
+                                        onClick={() => navigate(`/users/edit/${item.uuid}`)}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <div className="flex justify-center">
+                <button
+                    onClick={handlePreviousPage}
+                    disabled={page === 1}
+                    className="px-4 py-2 bg-white rounded disabled:opacity-50"
+                >
+                    Anterior
+                </button>
+                <span className="px-4 py-2">{page}</span>
+                <button
+                    onClick={handleNextPage}
+                    className="px-4 py-2 bg-white rounded"
+                >
+                    Próximo
+                </button>
+            </div>
+
         </Container>
     );
 };

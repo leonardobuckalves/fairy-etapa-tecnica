@@ -7,7 +7,7 @@ const ProfileInfoRow = ({ label, children }) => {
                 <p>{label}</p>
             </div>
             <div>
-                <p>{children}</p>
+                <p className="mr-6">{children}</p>
             </div>
         </div>
     );

@@ -6,7 +6,6 @@ import TitleSection from "./TitleSection";
 const LoadingInfo = () => {
     return (
         <Container>
-            <Header />
             <TitleSection>
                 Perfil
             </TitleSection>

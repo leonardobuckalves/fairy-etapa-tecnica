@@ -40,19 +40,19 @@ const Login = () => {
 
             navigate('/dashboard');
         } catch (error) {
-            console.error('Erro:', error.message);
+            throw new Error('Erro:', error.message);
         }
     };
 
     return (
-        <Container className="justify-center">
+        <Container>
 
             <TitleSection>
                 Login
             </TitleSection>
 
-            <div className="flex justify-center p-4 bg-white rounded">
-                <form onSubmit={handleSubmit} className='w-auto lg:w-96 shadow-md'>
+            <div className="flex justify-center p-4 bg-zinc-200 rounded">
+                <form onSubmit={handleSubmit} className='w-auto lg:w-96'>
                     <div>
                         <Label htmlFor="email">
                             Email

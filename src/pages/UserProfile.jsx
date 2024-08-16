@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../components/Header';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import Container from '../components/Container';
@@ -13,6 +13,8 @@ import Button from '../components/Button';
 import LoadingInfo from '../components/LoadingInfo';
 
 const UserProfile = () => {
+    const navigate = useNavigate();
+    
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -35,6 +37,10 @@ const UserProfile = () => {
 
     const token = sessionStorage.getItem('@user:access_token');
     const userUuid = sessionStorage.getItem('@user:uuid');
+
+    if (!token) {
+        navigate("/");
+    }
 
     const fetchUser = async () => {
         try {
@@ -108,7 +114,6 @@ const UserProfile = () => {
             });
 
             if (response.ok) {
-                // Após o upload, recarregue os dados do usuário para atualizar a imagem
                 await fetchUser();
             } else {
                 throw new Error(`Error: ${response.status}`);
@@ -132,14 +137,14 @@ const UserProfile = () => {
     const handleSubmit = async (event) => {
 
         const url = new URL('https://template-backend-fairy-d6gx9.ondigitalocean.app/api/v1/storage/profile-image');
-    
+
         event.preventDefault();
-    
+
         try {
             const formData = new FormData();
             formData.append("userUuid", userUuid);
             formData.append("file", file);
-    
+
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -147,11 +152,11 @@ const UserProfile = () => {
                 },
                 body: formData
             });
-    
+
             const result = await response.json();
 
             setPictureUrl(result.url);
-            
+
         } catch (error) {
             console.log(error);
         } finally {
@@ -170,8 +175,6 @@ const UserProfile = () => {
     return (
         <Container>
 
-            <Header />
-
             <TitleSection>
                 Perfil
             </TitleSection>
@@ -181,7 +184,7 @@ const UserProfile = () => {
                 <ProfilePicture perfil={user}>
                     <FontAwesomeIcon
                         icon={faEdit}
-                        className="ml-2 cursor-pointer text-blue-500"
+                        className="m-3 cursor-pointer text-lime-500 hover:text-lime-700"
                         onClick={handlePictureEditClick}
                     />
                     {isEditingPicture && (
@@ -192,15 +195,15 @@ const UserProfile = () => {
                                     <input type="file" onChange={(e) => setFile(e.target.files[0])} className="mb-4" />
 
                                     <div className="flex justify-between">
-                                        <button 
-                                            type="submit" 
+                                        <button
+                                            type="submit"
                                             disabled={!file}
                                             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                         >
                                             Upload
                                         </button>
-                                        <button 
-                                            type="button" 
+                                        <button
+                                            type="button"
                                             onClick={handlePictureCloseClick}
                                             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                                         >
@@ -237,7 +240,7 @@ const UserProfile = () => {
                                 {user.email}
                                 <FontAwesomeIcon
                                     icon={faEdit}
-                                    className="ml-2 cursor-pointer text-blue-500"
+                                    className="ml-2 cursor-pointer text-lime-500 hover:text-lime-700"
                                     onClick={() => handleEditClick('email')}
                                 />
                             </>
@@ -258,7 +261,7 @@ const UserProfile = () => {
                                 {user.type}
                                 <FontAwesomeIcon
                                     icon={faEdit}
-                                    className="ml-2 cursor-pointer text-blue-500"
+                                    className="ml-2 cursor-pointer text-lime-500 hover:text-lime-700"
                                     onClick={() => handleEditClick('type')}
                                 />
                             </>
@@ -290,10 +293,9 @@ const UserProfile = () => {
                         </div>
                     )}
                 </ProfileInformation>
-                {/*
-                    <p>Deletado em: {user.deletedAt ? new Date(user.deletedAt).toLocaleDateString() : 'Nunca'}</p>
-                */}
+
             </UserSection>
+
         </Container>
     );
 };
