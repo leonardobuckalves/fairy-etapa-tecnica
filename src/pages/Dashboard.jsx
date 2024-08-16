@@ -10,7 +10,7 @@ const Dashboard = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
-    const [itemsPerPage] = useState(5);
+    const [itemsPerPage] = useState(4);
     const navigate = useNavigate();
 
     const fetchData = async () => {
@@ -71,13 +71,13 @@ const Dashboard = () => {
 
 
     return (
-        <Container>
+        <Container className="overflow-auto">
 
             <TitleSection>
                 Lista de Usuários
             </TitleSection>
 
-            <div className="flex justify-center overflow-x-auto">
+            <div className="flex justify-center">
                 <table className="table-auto border border-gray-500 border-collapse bg-white">
                     <thead className="bg-lime-500">
                         <tr>
@@ -115,7 +115,7 @@ const Dashboard = () => {
                     </tbody>
                 </table>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-2">
                 <button
                     onClick={handlePreviousPage}
                     disabled={page === 1}
